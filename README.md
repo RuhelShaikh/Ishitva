@@ -40,8 +40,9 @@
 ## User (Authenticated)
 
 1. GET /api/users/items - View all items.
-2. POST /api/users/items/:itemId/like - Like an item.
-3. POST /api/users/items/:itemId/dislike - Dislike an item.
+2. GET /api/users/items/:itemId - View one item.
+3. POST /api/users/items/:itemId/like - Like an item.
+4. POST /api/users/items/:itemId/dislike - Dislike an item.
 
 ## Admin (Authenticated + Admin Role)
 
