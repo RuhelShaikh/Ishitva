@@ -7,14 +7,40 @@ const jwt = require("jsonwebtoken");
 exports.register = (req, res) => {
   const { username, email, password, role } = req.body;
 
-  // Create new user
-  const newUser = new User({ username, email, password, role });
+  // Basic password strength validation (at least 6 characters)
+  if (password.length < 6) {
+    return res
+      .status(400)
+      .json({ message: "Password must be at least 6 characters" });
+  }
 
-  newUser
-    .save()
-    .then((user) => res.status(201).json({ message: "User registered", user }))
+  // Check if username or email is already taken
+  User.findOne({ $or: [{ username }, { email }] })
+    .then((existingUser) => {
+      if (existingUser) {
+        return res
+          .status(400)
+          .json({ message: "Username or Email already exists" });
+      }
+
+      // Create and save the new user (password hashing happens in the model)
+      const newUser = new User({ username, email, password, role });
+
+      newUser
+        .save()
+        .then((user) =>
+          res
+            .status(201)
+            .json({ message: "User registered successfully", user })
+        )
+        .catch((err) =>
+          res.status(500).json({ message: "Error saving user", error: err })
+        );
+    })
     .catch((err) =>
-      res.status(400).json({ message: "Error registering user", error: err })
+      res
+        .status(500)
+        .json({ message: "Error checking existing users", error: err })
     );
 };
 
